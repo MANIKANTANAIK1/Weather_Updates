@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WeatherUpdates</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(to right, #83a4d4, #b6fbff);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333;
+      }
+      .container {
+        width: 350px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      input {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 1em;
+      }
+      button {
+        background-color: #008cba;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-bottom: 20px;
+      }
+      button:hover {
+        background-color: #005f75;
+      }
+      .weather-info {
+        margin-top: 20px;
+      }
+      .weather-info h1 {
+        font-size: 2em;
+        margin: 10px 0;
+      }
+      .weather-info div {
+        margin: 10px 0;
+        font-size: 1.2em;
+      }
+      #temp {
+        font-weight: bold;
+        font-size: 2.5em;
+        margin-top: 10px;
+      }
+      #icon img {
+        width: 100px;
+        height: 100px;
+      }
+      .min_max {
+        display: flex;
+        justify-content: space-between;
+        font-size: 20px; /* Adjust the font size as needed */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Weather Updates</h1>
+      <div><input type="text" id="input" placeholder="Enter city name" /></div>
+      <button onclick="getweather()" id="btn">Search</button>
+      <div class="weather-info" id="weather-info">
+        <h1 id="city"></h1>
+        <div id="icon"></div>
+        <div id="temp"></div>
+        <div id="description"></div>
+        <div class="min_max">
+          <div id="min_temp"></div>
+          <div id="max_temp"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      async function getweather() {
+        let input = document.getElementById("input").value;
+        let key = "03065f4ccf1afd38fae5d38846c0149d";
+        let url = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${input}&appid=${key}&units=metric`
+        );
+        let data = await url.json();
+
+        if (data.cod === "404") {
+          document.getElementById("city").textContent = "City not found.";
+          document.getElementById("icon").innerHTML = "";
+          document.getElementById("temp").textContent = "";
+          document.getElementById("description").textContent = "";
+          document.getElementById("min_temp").textContent = "";
+          document.getElementById("max_temp").textContent = "";
+          return;
+        }
+
+        let city = document.getElementById("city");
+        let temp = document.getElementById("temp");
+        let icon = document.getElementById("icon");
+        let min_temp = document.getElementById("min_temp");
+        let max_temp = document.getElementById("max_temp");
+        let description = document.getElementById("description");
+
+        city.textContent = input;
+        temp.textContent = `${data.main.temp}°C`;
+        description.textContent = data.weather[0].description;
+        icon.innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather icon">`;
+        min_temp.textContent = `Min: ${data.main.temp_min}°C`;
+        max_temp.textContent = `Max: ${data.main.temp_max}°C`;
+      }
+    </script>
+  </body>
+</html>
